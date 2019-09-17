@@ -1,4 +1,5 @@
 from skimage import io, transform  # skimage模块下的io transform(图像的形变与缩放)模块
+#skimage图片是h*w*c 像素是RGB 返回的是numpy
 import glob  # glob 文件通配符模块
 import os  # os 处理文件和目录的模块
 import tensorflow as tf
@@ -27,12 +28,15 @@ def read_img(path):
     # enumerate()可用于同时获得索引和值（列举，枚举的意思）
     for idx, folder in enumerate(cate): #到花名
         # glob.glob(s+'*.py') 从目录通配符搜索中生成文件列表
-        # 返回文件路径列表（注意是list），只有当前目录的文件名，不包括子文件里的文件通常放在最后一级目录
-        for im in glob.glob(folder + '/*.jpg'): #进入花名，列举花名的每一张图片
+        # 返回文件路径列表（注意是list），只有当前目录的文件名，不包括子文件里的文件，通常放在最后一级目录
+        for im in glob.glob(folder + '/*.jpg'): #进入花名，列举花名的每一张图片，注意最后的写法
             # 输出读取的图片的名称
             #print('reading the images:%s' % (im))
             # io.imread(im)读取单张RGB图片 skimage.io.imread(fname,as_grey=True)读取单张灰度图片
             # 读取的图片
+            #遇到的RGB图像是处于0-255之间，为了更好地处理图像，通常会将图像转变为0-1之间
+            #进入的是uint8，API中间转化由uint8-float-uint8,所以读的img可以直接显示出来
+            #初学者使用sckit-image
             img = io.imread(im)
             #print(img.dtype.name)
             # skimage.transform.resize(image, output_shape)改变图片的尺寸
@@ -42,7 +46,8 @@ def read_img(path):
             imgs.append(img)
             # 将图片的label加载到labels[]中，与上方的imgs索引对应
             labels.append(idx)
-    # 将读取的图片和labels信息，转化为numpy结构的ndarr(N维数组对象（矩阵）)数据信息
+    # 将读取的图片和labels信息，转化为numpy结构的ndarry(N维数组对象（矩阵）)数据信息
+    #将列表转化成一个数组a=[1,2] np.asarry(a) =([1,2])
     return np.asarray(imgs, np.float32), np.asarray(labels, np.int32)
 
 
